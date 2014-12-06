@@ -1,0 +1,25 @@
+set daemon {{ salt['pillar.get']('monit:daemon_interval') }}
+{%- if salt['pillar.get']('monit:start_delay') %}
+with start delay {{ salt['pillar.get']('monit:start_delay') }}
+{%- endif %}
+
+set logfile {{ salt['pillar.get']('monit:logfile') }}
+{% if salt['pillar.get']('monit:mail') %}
+set mailserver {{ salt['pillar.get']('monit:mail:server') }} port {{ salt['pillar.get']('monit:mail:port') }}
+  username "{{ salt['pillar.get']('monit:mail:username') }}" password "{{ salt['pillar.get']('monit:mail:password') }}"
+  using tlsv1
+  with timeout 30 seconds
+{% endif -%}
+{% if salt['pillar.get']('monit:alert') %}
+{% for email in pillar['monit']['alert'] -%}
+set alert {{email}}
+{% endfor -%}
+{% endif -%}
+{% if salt['pillar.get']('monit:httpd') %}
+set httpd port {{ salt['pillar.get']('monit:httpd:port') }} and
+  use address {{ salt['pillar.get']('monit:httpd:bind') }}
+  {% for statement in pillar['monit']['httpd']['allow'] -%}
+  allow {{ statement }}
+  {% endfor -%}
+{% endif %}
+include {{ confd_dir }}/*

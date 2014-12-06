@@ -1,0 +1,56 @@
+{% set monit = salt['grains.filter_by']({
+    'Arch': {
+      'pkg': 'monit',
+      'service': 'monit',
+      'conf_dir': '/etc',
+      'confd_dir': '/etc/monit.d',
+      'openssh': {
+        'path': {
+          'pid': '/run/sshd.pid',
+          'sshd': '/usr/bin/sshd',
+          'sftpserver': '/usr/lib/ssh/sftp-server',
+          'sshd_config': '/etc/ssh/sshd_config',
+        },
+        'cmd': {
+          'start': '/bin/systemctl start openssh',
+          'stop': '/bin/systemctl stop openssh',
+        }
+      }
+    },
+    'Debian': {
+      'pkg': 'monit',
+      'service': 'monit',
+      'conf_dir': '/etc/monit',
+      'confd_dir': '/etc/monit/conf.d',
+      'openssh': {
+        'path': {
+          'pid': '/run/sshd.pid',
+          'sshd': '/usr/sbin/sshd',
+          'sftpserver': '/usr/lib/sftp-server',
+          'sshd_config': '/etc/ssh/sshd_config',
+        },
+        'cmd': {
+          'start': '/etc/init.d/ssh start',
+          'stop': '/etc/init.d/ssh stop',
+        }
+      }
+    },
+    'RedHat': {
+      'pkg': 'monit',
+      'service': 'monit',
+      'conf_dir': '/etc',
+      'confd_dir': '/etc/monit.d',
+      'openssh': {
+        'path': {
+          'pid': '/run/sshd.pid',
+          'sshd': '/sbin/sshd',
+          'sftpserver': '/usr/libexec/openssh/sftp-server',
+          'sshd_config': '/etc/ssh/sshd_config',
+        },
+        'cmd': {
+          'start': '/usr/bin/systemctl start sshd',
+          'stop': '/usr/bin/systemctl stop sshd',
+        }
+      }
+    }
+}, merge=salt['pillar.get']('monit:lookup')) %}

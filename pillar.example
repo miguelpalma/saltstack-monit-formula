@@ -1,0 +1,20 @@
+monit:
+  daemon_interval: 120
+  start_delay: 60 # Optional field
+  logfile: '/var/log/monit.log'
+  mail: # Optional section
+    server: 'smtp.example.com'
+    port: 587
+    username: 'sender@example.com'
+    password: 'mySecretPassword'
+  alert: # Optional section
+    - 'email1@example.com'
+    - 'email2@example.com'
+  httpd: # Optional section
+    port: 8080
+    bind: 'localhost'
+    allow:
+      - 'localhost'
+      - '0.0.0.0/0.0.0.0'
+      - 'admin:monit'
+      - '@adm'
